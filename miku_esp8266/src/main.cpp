@@ -1,7 +1,15 @@
+/**
+ * Part of miku- opensource smart air purifier project subjected to terms of
+ * MIT license agreement. A license file is distributed with
+ * the project.
+ * @Author: Ritesh Sharma
+ * @Date: 31-12-2025
+ * @Detail: entry point of the application
+ */
 #include <ESP8266WiFi.h>
 #include <ESP8266WebServer.h>
 
-#define LED_PIN LED_BUILTIN
+#define LED_PIN D2
 #define DUST_PIN A0
 #define RELAY_PIN D1
 
@@ -22,9 +30,9 @@ float readPM25() {
   digitalWrite(LED_PIN, HIGH);
   delayMicroseconds(9680);
 
-  float voltage = adc * (3.3 / 1023.0);
-  float dustDensity = max(0.0, (voltage - 0.6) * 1000.0);
-  return dustDensity/100;
+  float voltage = adc * (5 / 1024.0);
+  float dustDensity = max(0.0, 170.0 * (voltage - 0.1));
+  return dustDensity;
 }
 
 /* ===== HTML UI ===== */
@@ -141,7 +149,7 @@ function update() {
     .then(r => r.json())
     .then(d => {
       document.getElementById('pm').innerHTML = Math.round(d.pm);
-      let deg = Math.min(180, d.pm * 2);
+      let deg = Math.min(360, (d.pm / 833) * 360);
       document.getElementById('gauge').style.setProperty('--deg', deg + 'deg');
 
       let btn = document.getElementById('power');
